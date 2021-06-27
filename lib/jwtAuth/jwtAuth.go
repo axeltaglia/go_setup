@@ -1,6 +1,7 @@
 package jwtAuth
 
 import (
+	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"net/http"
@@ -24,6 +25,19 @@ type AccessDetails struct {
 	UserId     uint64
 }
 
+func InterceptAuth(delegate func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tokenEntry, err := VerifyToken(r)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			panic("unauthorized")
+		} else {
+			ctx := context.WithValue(r.Context(), "tokenEntry", tokenEntry)
+			delegate(w, r.WithContext(ctx))
+		}
+	}
+}
+
 func CreateToken(userid uint64) (string, error) {
 	var err error
 	//Creating Access Token
@@ -33,7 +47,7 @@ func CreateToken(userid uint64) (string, error) {
 	atClaims["user_id"] = userid
 	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
+	token, err := at.SignedString([]byte("helloworld"))
 	if err != nil {
 		return "", err
 	}
@@ -57,7 +71,7 @@ func VerifyToken(r *http.Request) (*jwt.Token, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("ACCESS_SECRET")), nil
+		return []byte("helloworld"), nil
 	})
 	if err != nil {
 		return nil, err
@@ -81,6 +95,7 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
 		accessUuid, ok := claims["access_uuid"].(string)
