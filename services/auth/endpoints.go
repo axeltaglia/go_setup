@@ -20,7 +20,15 @@ func (o *Endpoints) private(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "private")
 }
 
-func (o *Endpoints) login(w http.ResponseWriter, r *http.Request) {
+func (o *Endpoints) signUp(w http.ResponseWriter, r *http.Request) {
+	token, err := jwtAuth.CreateToken(6)
+	if err != nil {
+		panic("err")
+	}
+	tkt.JsonResponse(LoginResponse{Token: &token}, w)
+}
+
+func (o *Endpoints) signIn(w http.ResponseWriter, r *http.Request) {
 	token, err := jwtAuth.CreateToken(6)
 	if err != nil {
 		panic("err")
@@ -29,7 +37,8 @@ func (o *Endpoints) login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *Endpoints) Handle() {
-	tkt.TransactionalLoggable("/login", o.login)
+	tkt.TransactionalLoggable("/signUp", o.signUp)
+	tkt.TransactionalLoggable("/signIn", o.signIn)
 	tkt.AuthenticatedEndpoint("/private", o.private)
 }
 

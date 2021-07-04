@@ -101,7 +101,6 @@ const Dashboard = ({children, routes, width}) => {
         <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
           {children}
         </MainContent>
-        <Footer />
       </AppContent>
     </Root>
   )

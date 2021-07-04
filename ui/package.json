@@ -50,6 +50,7 @@
     "axios": "^0.20.0",
     "polished": "^3.6.7",
     "react-perfect-scrollbar": "^1.5.8",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "unstated-next": "^1.1.0"
   }
 }

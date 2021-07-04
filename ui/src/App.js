@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {connect} from "react-redux";
 
 import Helmet from 'react-helmet';
@@ -12,8 +12,10 @@ import {ThemeProvider} from "styled-components";
 import maTheme from "./theme";
 import Routes from "./routes/Routes";
 import axios from 'axios';
+import Store from "./containers/Store";
 
 function App({theme}) {
+    [theme] = useState(5)
     setup();
     return (
         <React.Fragment>
@@ -23,9 +25,11 @@ function App({theme}) {
             />
             <StylesProvider injectFirst>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <MuiThemeProvider theme={maTheme[theme.currentTheme]}>
-                        <ThemeProvider theme={maTheme[theme.currentTheme]}>
-                            <Routes/>
+                    <MuiThemeProvider theme={maTheme[theme]}>
+                        <ThemeProvider theme={maTheme[theme]}>
+                            <Store>
+                                <Routes/>
+                            </Store>
                         </ThemeProvider>
                     </MuiThemeProvider>
                 </MuiPickersUtilsProvider>
@@ -41,4 +45,4 @@ function setup() {
     })
 }
 
-export default connect(store => ({theme: {currentTheme: 0}}))(App);
+export default App;

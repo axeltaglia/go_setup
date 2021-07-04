@@ -28,11 +28,10 @@ const Divider = styled(MuiDivider)(spacing);
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 function EmptyCard() {
+
     return (
         <Card mb={6}>
             <CardContent>
-
-
                 <Typography variant="body2" gutterBottom>
                     Empty card
                 </Typography>

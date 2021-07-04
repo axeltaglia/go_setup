@@ -3,7 +3,7 @@ import styled, {withTheme} from "styled-components";
 import {connect} from "react-redux";
 
 import {
-    AppBar as MuiAppBar,
+    AppBar as MuiAppBar, Avatar,
     Grid,
     Hidden,
     IconButton as MuiIconButton,
@@ -15,7 +15,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Link from "@material-ui/core/Link";
 import {NavLink as RouterNavLink} from "react-router-dom";
-import { useSelector, useDispatch } from 'react-redux';
+import {Auth} from "../containers/AuthContainer";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -35,8 +35,12 @@ const NavLink = React.forwardRef((props, ref) => (
 ));
 
 function UserMenu() {
-    const dispatch = useDispatch();
     const [anchorMenu, setAnchorMenu] = useState(null);
+
+    const {
+        isLoggedIn,
+        logout,
+    } = Auth.useContainer();
 
     const toggleMenu = event => {
         setAnchorMenu(event.currentTarget);
@@ -47,7 +51,7 @@ function UserMenu() {
     };
 
     const handleSignOut = () => {
-        //dispatch(signOutCurrentUser())
+        logout()
         closeMenu()
     };
 
@@ -59,7 +63,7 @@ function UserMenu() {
                 onClick={toggleMenu}
                 color="inherit"
             >
-                <Power />
+                <Avatar alt="Lucy Lavender" src="/static/img/avatars/avatar-1.jpg" onClick={toggleMenu} />
             </IconButton>
             <Menu
                 id="menu-appbar"
@@ -68,20 +72,24 @@ function UserMenu() {
                 onClose={closeMenu}
             >
                 <MenuItem onClick={closeMenu}>
-                    <Link
-                        button
-                        dense
-                        component={NavLink}
-                        exact
-                        to={'/auth/sign-in'}
-                        activeClassName="active"
-                    >
-                        Sign In
-                    </Link>
+                    { !isLoggedIn() &&
+                        <Link
+                            button
+                            dense
+                            component={NavLink}
+                            exact
+                            to={'/auth/sign-in'}
+                            activeClassName="active"
+                        >
+                            Sign In
+                        </Link>
+                    }
                 </MenuItem>
-                <MenuItem onClick={handleSignOut}>
-                    Sign out
-                </MenuItem>
+                { isLoggedIn() &&
+                    <MenuItem onClick={handleSignOut}>
+                        Sign out
+                    </MenuItem>
+                }
             </Menu>
         </React.Fragment>
     );
@@ -114,4 +122,4 @@ const Header = ({onDrawerToggle}) => (
     </React.Fragment>
 );
 
-export default connect()(withTheme(Header));
+export default withTheme(Header);

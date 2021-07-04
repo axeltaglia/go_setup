@@ -368,30 +368,6 @@ function Sidebar({ classes, staticContext, location, ...rest }) {
           </Items>
         </List>
       </Scrollbar>
-      <SidebarFooter>
-        <Grid container spacing={2}>
-          <Grid item>
-            <StyledBadge
-              overlap="circle"
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              variant="dot"
-            >
-              <Avatar alt="Lucy Lavender" src="/static/img/avatars/avatar-1.jpg" />
-            </StyledBadge>
-          </Grid>
-          <Grid item>
-            <SidebarFooterText variant="body2">
-              Lucy Lavender
-            </SidebarFooterText>
-            <SidebarFooterSubText variant="caption">
-              UX Designer
-            </SidebarFooterSubText>
-          </Grid>
-        </Grid>
-      </SidebarFooter>
     </Drawer>
   );
 }
