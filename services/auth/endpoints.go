@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go_setup_v1/lib/jwtAuth"
 	"go_setup_v1/lib/tkt"
+	"go_setup_v1/models"
 	"gorm.io/gorm"
 	"net/http"
 )
@@ -13,6 +14,7 @@ type LoginResponse struct {
 }
 
 type Endpoints struct {
+	db *gorm.DB `json:"db"`
 }
 
 func (o *Endpoints) private(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +22,7 @@ func (o *Endpoints) private(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "private")
 }
 
-func (o *Endpoints) signUp(w http.ResponseWriter, r *http.Request) {
+func (o *Endpoints) signUp(tx *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	token, err := jwtAuth.CreateToken(6)
 	if err != nil {
 		panic("err")
@@ -28,7 +30,10 @@ func (o *Endpoints) signUp(w http.ResponseWriter, r *http.Request) {
 	tkt.JsonResponse(LoginResponse{Token: &token}, w)
 }
 
-func (o *Endpoints) signIn(w http.ResponseWriter, r *http.Request) {
+func (o *Endpoints) signIn(tx *gorm.DB, w http.ResponseWriter, r *http.Request) {
+	tx.Create(&models.Category{
+		Name: "hola mundo 2",
+	})
 	token, err := jwtAuth.CreateToken(6)
 	if err != nil {
 		panic("err")
@@ -37,8 +42,8 @@ func (o *Endpoints) signIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *Endpoints) Handle() {
-	tkt.TransactionalLoggable("/signUp", o.signUp)
-	tkt.TransactionalLoggable("/signIn", o.signIn)
+	tkt.TransactionalLoggable("/signUp", o.db, o.signUp)
+	tkt.TransactionalLoggable("/signIn", o.db, o.signIn)
 	tkt.AuthenticatedEndpoint("/private", o.private)
 }
 
@@ -48,5 +53,5 @@ func JsonResponse(i interface{}, w http.ResponseWriter) {
 }
 
 func NewEndpoints(db *gorm.DB) *Endpoints {
-	return &Endpoints{}
+	return &Endpoints{db: db}
 }

@@ -11,7 +11,7 @@ type DatabaseConfig struct {
 
 type EnvVars struct {
 	Environment    *string         `json:"environment"`
-	DatabaseConfig *DatabaseConfig `json:"databaseConfig"`
+	DatabaseConfig *DatabaseConfig `json:"dbConfig"`
 }
 
 func (o *EnvVars) Validate() bool {

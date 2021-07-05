@@ -9,7 +9,10 @@ import (
 
 func main() {
 	dsn := "host=localhost user=postgres password=postgres dbname=go_setup_v1 port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		SkipDefaultTransaction: true,
+	})
+
 	if err != nil {
 		panic(err)
 	}
