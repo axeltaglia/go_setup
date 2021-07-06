@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go_setup_v1/lib/jwtAuth"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"io"
 	"io/ioutil"
@@ -13,10 +14,12 @@ import (
 	"net/url"
 	"reflect"
 	"runtime/debug"
+	"strings"
+	"time"
 )
 
-func TransactionalLoggable(path string, db *gorm.DB, f func(tx *gorm.DB, w http.ResponseWriter, r *http.Request)) {
-	http.HandleFunc(path, InterceptFatal(InterceptCORS(InterceptLoggable(db, InterceptTransactional(db, Auditable(f))))))
+func TransactionalLoggable(path string, dbConfig *string, f func(tx *gorm.DB, w http.ResponseWriter, r *http.Request)) {
+	http.HandleFunc(path, InterceptFatal(InterceptCORS(InterceptLoggable(dbConfig, InterceptTransactional(dbConfig, Auditable(f))))))
 }
 
 func AuthenticatedEndpoint(path string, f func(w http.ResponseWriter, r *http.Request)) {
@@ -60,7 +63,7 @@ type RequestError struct {
 	Data        *json.RawMessage
 }
 
-func InterceptLoggable(db *gorm.DB, f func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
+func InterceptLoggable(dbConfig *string, f func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data, err := ioutil.ReadAll(r.Body)
 		CheckErr(err)
@@ -92,8 +95,10 @@ func InterceptLoggable(db *gorm.DB, f func(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-func InterceptTransactional(db *gorm.DB, delegate func(tx *gorm.DB, w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
+func InterceptTransactional(dbConfig *string, delegate func(tx *gorm.DB, w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := gorm.Open(postgres.Open(*dbConfig), &gorm.Config{SkipDefaultTransaction: true})
+		CheckErr(err)
 		defer CloseDB(db)
 		tx := db.Begin()
 		defer RollbackOnPanic(tx)
@@ -148,6 +153,15 @@ func NewErrorContext() *ErrorContext {
 	}
 }
 
+func ParseParamOrBody(r *http.Request, o interface{}) error {
+	s := r.URL.Query().Get("body")
+	if len(s) > 0 {
+		return json.NewDecoder(strings.NewReader(s)).Decode(o)
+	} else {
+		return json.NewDecoder(r.Body).Decode(o)
+	}
+}
+
 func JsonResponse(i interface{}, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "Application/json")
 	JsonEncode(i, w)
@@ -195,4 +209,41 @@ func ProcessPanic(intf interface{}) {
 	Logger("error").Println(intf)
 	stackTrace := string(debug.Stack())
 	Logger("error").Println(stackTrace)
+}
+
+func PString(s string) *string {
+	return &s
+}
+
+func PStringf(s string, values ...interface{}) *string {
+	return PString(fmt.Sprintf(s, values...))
+}
+
+func PInt64(i int64) *int64 {
+	return &i
+}
+
+func PInt(i int) *int {
+	return &i
+}
+
+func PFloat32(f float32) *float32 {
+	return &f
+}
+
+func PFloat64(f float64) *float64 {
+	return &f
+}
+
+func PTime(t time.Time) *time.Time {
+	return &t
+}
+
+func PBool(b bool) *bool {
+	return &b
+}
+
+func PJson(b []byte) *json.RawMessage {
+	rm := json.RawMessage(b)
+	return &rm
 }

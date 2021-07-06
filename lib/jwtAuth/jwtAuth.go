@@ -38,7 +38,7 @@ func InterceptAuth(delegate func(w http.ResponseWriter, r *http.Request)) http.H
 	}
 }
 
-func CreateToken(userid uint64) (string, error) {
+func CreateToken(userid uint) (string, error) {
 	var err error
 	//Creating Access Token
 	os.Setenv("ACCESS_SECRET", "helloworld") //this should be in an env file

@@ -37,11 +37,14 @@ function SignUp(props) {
         signUp,
     } = Auth.useContainer();
 
+    /*
     useEffect(() => {
         if(isLoggedIn()) {
             props.history.push("/")
         }
     }, [])
+
+     */
 
 
     const handleSubmit = async () => {

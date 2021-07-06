@@ -16,7 +16,7 @@ func main() {
 
 	DropTables(db)
 	CreateCategoriesTable(db)
-	//CreateProductsTable(db)
+	CreateUsersTable(db)
 }
 
 func DropTables(db *gorm.DB) {
@@ -28,6 +28,11 @@ func DropTables(db *gorm.DB) {
 func CreateCategoriesTable(db *gorm.DB) {
 	db.AutoMigrate(&models.Category{})
 	fmt.Println("Categories table created")
+}
+
+func CreateUsersTable(db *gorm.DB) {
+	db.AutoMigrate(&models.User{})
+	fmt.Println("Users table created")
 }
 
 /*
