@@ -4,8 +4,8 @@ import {Alert} from "./AlertContainer";
 
 const Store = ({children}) => {
     return (
-        <Alert.Provider initialState={{open: false, text: ""}}>
-            <Auth.Provider initialState={{firstName: null, lastName: null}}>
+        <Alert.Provider>
+            <Auth.Provider>
                 {children}
             </Auth.Provider>
         </Alert.Provider>

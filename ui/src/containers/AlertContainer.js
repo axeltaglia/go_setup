@@ -1,44 +1,23 @@
-import React, {useReducer} from 'react'
+import React, {useState} from 'react'
 import { createContainer } from "unstated-next"
 
-const initialState = {
-    open: false,
-    text: ""
-}
-
-function authReducer(state = initialState, action) {
-    switch (action.type) {
-        case "SET_OPEN":
-            return {
-                ...state,
-                open: action.payload,
-            }
-        case "SET_TEXT":
-            return {
-                ...state,
-                text: action.payload,
-            }
-        default:
-            return state;
-    }
-}
-
-function useAlert(initialState) {
-    const [state, dispatch] = useReducer(authReducer, initialState);
+function useAlert() {
+    const [open, setOpen] = useState(false)
+    const [text, setText] = useState("")
 
     const alertSuccess = (text) => {
-        dispatch({type: 'SET_OPEN', payload: true})
-        dispatch({type: 'SET_TEXT', payload: text})
+        setText(text)
+        setOpen(true)
     }
 
     const closeAlert = () => {
-        dispatch({type: 'SET_OPEN', payload: false})
+        setText("")
+        setOpen(false)
     }
 
-
     return {
-        open: state.open,
-        text: state.text,
+        open,
+        text,
         alertSuccess,
         closeAlert,
     }

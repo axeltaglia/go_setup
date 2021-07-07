@@ -2,11 +2,11 @@ import React, {useReducer} from 'react'
 import { createContainer } from "unstated-next"
 import axios from "axios";
 
-const initialState = {
+const authState = {
     token: null,
 }
 
-function authReducer(state = initialState, action) {
+function authReducer(state = authState, action) {
     switch (action.type) {
         case "LOGIN_USER":
             return {
@@ -21,7 +21,7 @@ function authReducer(state = initialState, action) {
     }
 }
 
-function useAuth(initialState) {
+function useAuth(initialState = authState) {
     const [auth, dispatch] = useReducer(authReducer, initialState);
 
     const signUp = async (signUpRequest) => {
