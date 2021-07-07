@@ -1,7 +1,8 @@
 import React from "react";
-import styled, { createGlobalStyle } from "styled-components";
+import styled, {createGlobalStyle} from "styled-components";
 
-import { CssBaseline } from "@material-ui/core";
+import {CssBaseline} from "@material-ui/core";
+import AlertMessage from "../components/AlertMessage";
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -24,14 +25,15 @@ const Root = styled.div`
   min-height: 100%;
 `;
 
-function Auth({ children }) {
-  return (
-    <Root>
-      <CssBaseline />
-      <GlobalStyle />
-      {children}
-    </Root>
-  );
+function Auth({children}) {
+    return (
+        <Root>
+            <CssBaseline/>
+            <GlobalStyle/>
+            {children}
+            <AlertMessage/>
+        </Root>
+    );
 }
 
 export default Auth;

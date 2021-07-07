@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import {Link, withRouter} from "react-router-dom";
 
@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import {Auth} from "../../containers/AuthContainer";
+import {Alert} from "../../containers/AlertContainer";
 
 const Button = styled(MuiButton)(spacing);
 
@@ -37,6 +38,10 @@ function SignUp(props) {
         signUp,
     } = Auth.useContainer();
 
+    const {
+        alertSuccess
+    } = Alert.useContainer();
+
     /*
     useEffect(() => {
         if(isLoggedIn()) {
@@ -50,8 +55,10 @@ function SignUp(props) {
     const handleSubmit = async () => {
         try {
             await signUp({name, lastName, occupation, email, password})
+            alertSuccess("User created!")
             props.history.push("/")
         } catch (e) {
+            alertSuccess("Something went wrong")
             console.log(e)
         }
     }

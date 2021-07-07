@@ -1,11 +1,14 @@
 import React from 'react'
 import {Auth} from "./AuthContainer";
+import {Alert} from "./AlertContainer";
 
 const Store = ({children}) => {
     return (
-        <Auth.Provider initialState={{firstName:  null, lastName: null}}>
-            {children}
-        </Auth.Provider>
+        <Alert.Provider initialState={{open: false, text: ""}}>
+            <Auth.Provider initialState={{firstName: null, lastName: null}}>
+                {children}
+            </Auth.Provider>
+        </Alert.Provider>
     )
 }
 

@@ -16,6 +16,7 @@ import {
 } from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";
+import {Alert} from "../../containers/AlertContainer";
 
 const NavLink = React.forwardRef((props, ref) => (
     <RouterNavLink innerRef={ref} {...props} />
@@ -41,6 +42,10 @@ function EmptyCard() {
 }
 
 function Blank() {
+    const {
+        alertSuccess,
+    } = Alert.useContainer()
+
     return (
         <React.Fragment>
             <Helmet title="Blank"/>
@@ -62,7 +67,7 @@ function Blank() {
 
             <Grid container spacing={6}>
                 <Grid item xs={12}>
-                    <EmptyCard/>
+                    <button onClick={() => alertSuccess("Hola mundo")}>Show alert</button>
                 </Grid>
             </Grid>
         </React.Fragment>

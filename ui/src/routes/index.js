@@ -12,7 +12,6 @@ const SignUp = async(() => import("../pages/auth/SignUp"));
 
 // Components components
 const Blank = async(() => import("../pages/dashboard/Blank"));
-const Categories = async(() => import("../pages/dashboard/Categories"));
 
 const authRoutes = {
     id: "Auth",
@@ -44,11 +43,6 @@ const dashboardsRoutes = {
             path: "/",
             name: "Blank Page",
             component: Blank
-        },
-        {
-            path: "/categories",
-            name: "Categories",
-            component: Categories
         }
     ],
     component: null

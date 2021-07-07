@@ -111,7 +111,7 @@ func InterceptTransactional(dbConfig *string, delegate func(tx *gorm.DB, w http.
 func CloseDB(db *gorm.DB) {
 	sqlDB, err := db.DB()
 	CheckErr(err)
-	sqlDB.Close()
+	_ = sqlDB.Close()
 }
 
 func RollbackOnPanic(tx *gorm.DB) {

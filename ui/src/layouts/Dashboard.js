@@ -1,19 +1,21 @@
-import React, { useState } from "react";
-import styled, { createGlobalStyle } from "styled-components";
+import React, {useState} from "react";
+import styled, {createGlobalStyle} from "styled-components";
 
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import Footer from "../components/Footer";
 
-import { spacing } from "@material-ui/system";
+import {spacing} from "@material-ui/system";
 import {
-  Hidden,
-  CssBaseline,
-  Paper as MuiPaper,
-  withWidth
+    Hidden,
+    CssBaseline,
+    Paper as MuiPaper,
+    withWidth
 } from "@material-ui/core";
 
-import { isWidthUp } from "@material-ui/core/withWidth";
+import {isWidthUp} from "@material-ui/core/withWidth";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from '@material-ui/lab/Alert';
+import AlertMessage from "../components/AlertMessage";
 
 const drawerWidth = 260;
 
@@ -69,41 +71,42 @@ const MainContent = styled(Paper)`
 `;
 
 const Dashboard = ({children, routes, width}) => {
-  const [mobileOpen, setMobileOpen] = useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
 
-  return (
-    <Root>
-      <CssBaseline />
-      <GlobalStyle />
-      <Drawer>
-        <Hidden mdUp implementation="js">
-          <Sidebar
-            routes={routes}
-            PaperProps={{ style: { width: drawerWidth } }}
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-          />
-        </Hidden>
-        <Hidden smDown implementation="css">
-          <Sidebar
-            routes={routes}
-            PaperProps={{ style: { width: drawerWidth } }}
-          />
-        </Hidden>
-      </Drawer>
-      <AppContent>
-        <Header onDrawerToggle={handleDrawerToggle} />
-        <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
-          {children}
-        </MainContent>
-      </AppContent>
-    </Root>
-  )
+    return (
+        <Root>
+            <CssBaseline/>
+            <GlobalStyle/>
+            <Drawer>
+                <Hidden mdUp implementation="js">
+                    <Sidebar
+                        routes={routes}
+                        PaperProps={{style: {width: drawerWidth}}}
+                        variant="temporary"
+                        open={mobileOpen}
+                        onClose={handleDrawerToggle}
+                    />
+                </Hidden>
+                <Hidden smDown implementation="css">
+                    <Sidebar
+                        routes={routes}
+                        PaperProps={{style: {width: drawerWidth}}}
+                    />
+                </Hidden>
+            </Drawer>
+            <AppContent>
+                <Header onDrawerToggle={handleDrawerToggle}/>
+                <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
+                    {children}
+                    <AlertMessage />
+                </MainContent>
+            </AppContent>
+        </Root>
+    )
 }
 
 export default withWidth()(Dashboard);
