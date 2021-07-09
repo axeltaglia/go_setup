@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import styled, {withTheme} from "styled-components";
-import {connect} from "react-redux";
+import {withRouter} from 'react-router-dom';
 
 import {
     AppBar as MuiAppBar, Avatar,
@@ -16,6 +16,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Link from "@material-ui/core/Link";
 import {NavLink as RouterNavLink} from "react-router-dom";
 import {Auth} from "../containers/AuthContainer";
+import props from "../theme/props";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -53,6 +54,7 @@ function UserMenu() {
     const handleSignOut = () => {
         logout()
         closeMenu()
+        //props.history.push("/auth/sign-in")
     };
 
     return (
@@ -122,4 +124,4 @@ const Header = ({onDrawerToggle}) => (
     </React.Fragment>
 );
 
-export default withTheme(Header);
+export default withTheme(Header)

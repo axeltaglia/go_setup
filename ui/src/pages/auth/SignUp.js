@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {Link, withRouter} from "react-router-dom";
 
@@ -15,6 +15,7 @@ import {
 import { spacing } from "@material-ui/system";
 import {Auth} from "../../containers/AuthContainer";
 import {Alert} from "../../containers/AlertContainer";
+import Grid from "@material-ui/core/Grid";
 
 const Button = styled(MuiButton)(spacing);
 
@@ -34,22 +35,19 @@ function SignUp(props) {
     const [password, setPassword] = useState('');
 
     const {
+        alertSuccess
+    } = Alert.useContainer();
+
+    const {
         isLoggedIn,
         signUp,
     } = Auth.useContainer();
 
-    const {
-        alertSuccess
-    } = Alert.useContainer();
-
-    /*
     useEffect(() => {
         if(isLoggedIn()) {
             props.history.push("/")
         }
     }, [])
-
-     */
 
 
     const handleSubmit = async () => {
@@ -93,16 +91,32 @@ function SignUp(props) {
                     <InputLabel htmlFor="password">Password</InputLabel>
                     <Input name="password" type="password" id="password" autoComplete="current-password" onChange={event => setPassword(event.target.value)} />
                 </FormControl>
-                <Button
-                    component={Link}
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    mt={2}
-                    onClick={handleSubmit}
-                >
-                    Sign up
-                </Button>
+                <Grid container spacing={3}>
+                    <Grid item xs={6}>
+                        <Button
+                            component={Link}
+                            color="primary"
+                            variant="outlined"
+                            mt={2}
+                            to={"/auth/sign-in"}
+                        >
+                            Sign In
+                        </Button>
+                    </Grid>
+                    <Grid item container xs={6} justify="flex-end">
+                        <Button
+                            component={Link}
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            mt={2}
+                            onClick={handleSubmit}
+                        >
+                            Sign up
+                        </Button>
+                    </Grid>
+                </Grid>
+
             </form>
         </Wrapper>
     );

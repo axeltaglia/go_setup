@@ -313,7 +313,7 @@ function Sidebar({ classes, staticContext, location, ...rest }) {
   return (
     <Drawer variant="permanent" {...rest}>
       <Brand>
-        <BrandIcon /> <Box ml={1}>Material App <BrandChip label="PRO" /></Box> 
+        <BrandIcon /> <Box ml={1}>Institutional Site</Box>
       </Brand>
       <Scrollbar>
         <List disablePadding>

@@ -11,7 +11,7 @@ const SignIn = async(() => import("../pages/auth/SignIn"));
 const SignUp = async(() => import("../pages/auth/SignUp"));
 
 // Components components
-const Blank = async(() => import("../pages/dashboard/Blank"));
+const Home = async(() => import("../pages/dashboard/Home"));
 
 const authRoutes = {
     id: "Auth",
@@ -41,8 +41,8 @@ const dashboardsRoutes = {
     children: [
         {
             path: "/",
-            name: "Blank Page",
-            component: Blank
+            name: "Home Page",
+            component: Home
         }
     ],
     component: null

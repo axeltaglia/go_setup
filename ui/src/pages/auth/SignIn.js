@@ -16,6 +16,7 @@ import {
 } from "@material-ui/core";
 import {spacing} from "@material-ui/system";
 import {withRouter} from 'react-router-dom';
+import Grid from "@material-ui/core/Grid";
 
 const Button = styled(MuiButton)(spacing);
 
@@ -86,16 +87,32 @@ function SignIn(props) {
                     control={<Checkbox value="remember" color="primary"/>}
                     label="Remember me"
                 />
-                <Button
-                    component={Link}
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    mb={2}
-                    onClick={handleSubmit}
-                >
-                    Sign in
-                </Button>
+
+                <Grid container spacing={3}>
+                    <Grid item xs={6}>
+                        <Button
+                            component={Link}
+                            color="primary"
+                            variant="outlined"
+                            mt={2}
+                            to={"/auth/sign-up"}
+                        >
+                            Create an account
+                        </Button>
+                    </Grid>
+                    <Grid item container xs={6} justify="flex-end">
+                        <Button
+                            component={Link}
+                            variant="contained"
+                            color="primary"
+                            mt={2}
+                            onClick={handleSubmit}
+                        >
+                            Sign in
+                        </Button>
+                    </Grid>
+                </Grid>
+
             </form>
         </Wrapper>
     );
