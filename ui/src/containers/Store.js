@@ -1,14 +1,14 @@
 import React from 'react'
 import {AuthContainer} from "./AuthContainer";
-import {Alert} from "./AlertContainer";
+import {AlertContainer} from "./AlertContainer";
 
 const Store = ({children}) => {
     return (
-        <Alert.Provider>
+        <AlertContainer.Provider>
             <AuthContainer.Provider>
                 {children}
             </AuthContainer.Provider>
-        </Alert.Provider>
+        </AlertContainer.Provider>
     )
 }
 

@@ -17,8 +17,12 @@ import {
 import {spacing} from "@material-ui/system";
 import {withRouter} from 'react-router-dom';
 import Grid from "@material-ui/core/Grid";
+import {resolveErrorMessage} from "../../helpers/utils";
+import Alert from '@material-ui/lab/Alert';
+import {AlertContainer} from "../../containers/AlertContainer";
 
 const Button = styled(MuiButton)(spacing);
+const Spacer = styled.div(spacing);
 
 const Wrapper = styled(Paper)`
   padding: ${props => props.theme.spacing(6)}px;
@@ -29,19 +33,26 @@ const Wrapper = styled(Paper)`
 `;
 
 function SignIn(props) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState(null)
 
     const {
         signIn,
-    } = AuthContainer.useContainer();
+    } = AuthContainer.useContainer()
+
+    const {
+        alertSuccess
+    } = AlertContainer.useContainer();
 
     const handleSubmit = async () => {
         try {
+            setErrorMessage(null)
             await signIn({email, password})
+            alertSuccess("Welcome!")
             props.history.push("/")
         } catch (e) {
-            console.log(e)
+            setErrorMessage(resolveErrorMessage(e))
         }
     }
 
@@ -105,7 +116,10 @@ function SignIn(props) {
                         </Button>
                     </Grid>
                 </Grid>
-
+                <Spacer mb={4}/>
+                { errorMessage &&
+                    <Alert mb={4} severity="error">{errorMessage}</Alert>
+                }
             </form>
         </Wrapper>
     );

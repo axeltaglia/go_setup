@@ -1,14 +1,14 @@
 import React from 'react'
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
-import {Alert} from "../containers/AlertContainer";
+import {AlertContainer} from "../containers/AlertContainer";
 
 const AlertMessage = () => {
     const {
         open,
         text,
         closeAlert
-    } = Alert.useContainer()
+    } = AlertContainer.useContainer()
 
     const handleClose = () => {
         closeAlert()

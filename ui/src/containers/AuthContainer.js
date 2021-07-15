@@ -30,7 +30,7 @@ function useAuth(initialState = authState) {
     }
 
     const signIn = async (signInRequest) => {
-        let response = await axios.post("/signIn", signInRequest)
+        const response = await axios.post("/signIn", signInRequest)
         dispatch({type: 'LOGIN_USER', payload: response.data.token})
         window.localStorage.setItem("tokenGo", response.data.token);
     }

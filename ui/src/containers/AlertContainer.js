@@ -23,4 +23,4 @@ function useAlert() {
     }
 }
 
-export const Alert = createContainer(useAlert);
+export const AlertContainer = createContainer(useAlert);

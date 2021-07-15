@@ -14,11 +14,13 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import {AuthContainer} from "../../containers/AuthContainer";
-import {Alert} from "../../containers/AlertContainer";
+import {AlertContainer} from "../../containers/AlertContainer";
 import Grid from "@material-ui/core/Grid";
+import {resolveErrorMessage} from "../../helpers/utils";
+import Alert from "@material-ui/lab/Alert";
 
 const Button = styled(MuiButton)(spacing);
-
+const Spacer = styled.div(spacing);
 const Wrapper = styled(Paper)`
   padding: ${props => props.theme.spacing(6)}px;
 
@@ -33,31 +35,23 @@ function SignUp(props) {
     const [occupation, setOccupation] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState(null)
 
     const {
         alertSuccess
-    } = Alert.useContainer();
+    } = AlertContainer.useContainer();
 
     const {
-        isLoggedIn,
         signUp,
     } = AuthContainer.useContainer();
-
-    useEffect(() => {
-        if(isLoggedIn()) {
-            props.history.push("/")
-        }
-    }, [])
-
 
     const handleSubmit = async () => {
         try {
             await signUp({name, lastName, occupation, email, password})
             alertSuccess("User created!")
-            props.history.push("/")
+            props.history.push("/auth/sign-in")
         } catch (e) {
-            alertSuccess("Something went wrong")
-            console.log(e)
+            setErrorMessage(resolveErrorMessage(e))
         }
     }
 
@@ -116,7 +110,10 @@ function SignUp(props) {
                         </Button>
                     </Grid>
                 </Grid>
-
+                <Spacer mb={4}/>
+                { errorMessage &&
+                <Alert mb={4} severity="error">{errorMessage}</Alert>
+                }
             </form>
         </Wrapper>
     );
