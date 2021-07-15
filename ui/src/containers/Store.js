@@ -1,13 +1,13 @@
 import React from 'react'
-import {Auth} from "./AuthContainer";
+import {AuthContainer} from "./AuthContainer";
 import {Alert} from "./AlertContainer";
 
 const Store = ({children}) => {
     return (
         <Alert.Provider>
-            <Auth.Provider>
+            <AuthContainer.Provider>
                 {children}
-            </Auth.Provider>
+            </AuthContainer.Provider>
         </Alert.Provider>
     )
 }

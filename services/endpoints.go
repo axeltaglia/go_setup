@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"go_setup_v1/lib/jwtAuth"
 	"go_setup_v1/lib/tkt"
 	"go_setup_v1/models"
@@ -15,12 +14,7 @@ type LoginResponse struct {
 }
 
 type Endpoints struct {
-	dbConfig *string `json:"dbConfig"`
-}
-
-func (o *Endpoints) private(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Fprintf(w, "private")
+	DbConfig *string `json:"dbConfig"`
 }
 
 func (o *Endpoints) signUp(tx *gorm.DB, w http.ResponseWriter, r *http.Request) {
@@ -42,7 +36,17 @@ func (o *Endpoints) signUp(tx *gorm.DB, w http.ResponseWriter, r *http.Request) 
 }
 
 func (o *Endpoints) signIn(tx *gorm.DB, w http.ResponseWriter, r *http.Request) {
-	token, err := jwtAuth.CreateToken(6)
+	data := SignInRequest{}
+	tkt.CheckErr(tkt.ParseParamOrBody(r, &data))
+	currentUser := models.User{}
+	if err := tx.Where("email = ?", *data.Email).First(&currentUser).Error; err != nil {
+		panic(ErrorResponse{ErrorMessage: "Invalid email or password"})
+	}
+	err := bcrypt.CompareHashAndPassword([]byte(currentUser.Password), []byte(*data.Password))
+	if err != nil {
+		panic(ErrorResponse{ErrorMessage: "Invalid email or password"})
+	}
+	token, err := jwtAuth.CreateToken(currentUser.ID)
 	if err != nil {
 		panic("err")
 	}
@@ -50,9 +54,8 @@ func (o *Endpoints) signIn(tx *gorm.DB, w http.ResponseWriter, r *http.Request) 
 }
 
 func (o *Endpoints) Handle() {
-	tkt.TransactionalLoggable("/signUp", o.dbConfig, o.signUp)
-	tkt.TransactionalLoggable("/signIn", o.dbConfig, o.signIn)
-	tkt.AuthenticatedEndpoint("/private", o.private)
+	tkt.TransactionalLoggable("/signUp", o.DbConfig, o.signUp)
+	tkt.TransactionalLoggable("/signIn", o.DbConfig, o.signIn)
 }
 
 func JsonResponse(i interface{}, w http.ResponseWriter) {
@@ -61,5 +64,5 @@ func JsonResponse(i interface{}, w http.ResponseWriter) {
 }
 
 func NewEndpoints(dbConfig *string) *Endpoints {
-	return &Endpoints{dbConfig: dbConfig}
+	return &Endpoints{DbConfig: dbConfig}
 }

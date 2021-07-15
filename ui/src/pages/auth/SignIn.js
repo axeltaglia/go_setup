@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import {Link} from "react-router-dom";
-import {Auth} from '../../containers/AuthContainer'
+import {AuthContainer} from '../../containers/AuthContainer'
 import Helmet from 'react-helmet';
 
 import {
@@ -33,15 +33,8 @@ function SignIn(props) {
     const [password, setPassword] = useState('');
 
     const {
-        isLoggedIn,
         signIn,
-    } = Auth.useContainer();
-
-    useEffect(() => {
-        if(isLoggedIn()) {
-            props.history.push("/")
-        }
-    }, [])
+    } = AuthContainer.useContainer();
 
     const handleSubmit = async () => {
         try {

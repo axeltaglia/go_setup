@@ -1,9 +1,9 @@
 import React, {useReducer} from 'react'
-import { createContainer } from "unstated-next"
+import {createContainer} from "unstated-next"
 import axios from "axios";
 
 const authState = {
-    token: null,
+    token: window.localStorage.getItem("tokenGo"),
 }
 
 function authReducer(state = authState, action) {
@@ -32,18 +32,20 @@ function useAuth(initialState = authState) {
     const signIn = async (signInRequest) => {
         let response = await axios.post("/signIn", signInRequest)
         dispatch({type: 'LOGIN_USER', payload: response.data.token})
+        window.localStorage.setItem("tokenGo", response.data.token);
     }
 
     const logout = () => {
         dispatch({type: 'LOGOUT_USER'})
+        window.localStorage.removeItem("tokenGo");
     }
 
     const isLoggedIn = () => {
-        return auth.token !== null;
+        return auth && auth.token !== null;
     }
 
     return {
-        user: auth,
+        token: auth ? auth.token : null,
         signUp,
         signIn,
         logout,
@@ -51,4 +53,4 @@ function useAuth(initialState = authState) {
     }
 }
 
-export const Auth = createContainer(useAuth);
+export const AuthContainer = createContainer(useAuth);

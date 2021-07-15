@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import styled from "styled-components";
 
 import {
@@ -9,7 +9,6 @@ import {
 } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
-import {Auth} from "../../containers/AuthContainer";
 import {withRouter} from "react-router-dom";
 
 const Typography = styled(MuiTypography)(spacing);
@@ -70,18 +69,7 @@ function Introduction() {
     );
 }
 
-function Home(props) {
-
-    const {
-        isLoggedIn,
-    } = Auth.useContainer();
-
-    useEffect(() => {
-        if(!isLoggedIn()) {
-            props.history.push("/auth/sign-in")
-        }
-    }, [])
-
+function Home() {
     return (
         <React.Fragment>
             <Introduction />

@@ -1,56 +1,22 @@
-import React from "react";
+import React from 'react';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import {dashboardLayoutRoutes, authLayoutRoutes} from "./index";
+import Dashboard from "../layouts/Dashboard";
+import Home from "../pages/dashboard/Home";
+import SignIn from "../pages/auth/SignIn";
+import SignUp from "../pages/auth/SignUp";
+import PrivateRoute from "./PrivateRoute";
+import Auth from "../layouts/Auth";
 
-import DashboardLayout from "../layouts/Dashboard";
-import AuthLayout from "../layouts/Auth";
-import Page404 from "../pages/auth/Page404";
-
-const childRoutes = (Layout, routes) =>
-    routes.map(({children, path, component: Component}, index) =>
-        children ? (
-            // Route item with children
-            children.map(({path, component: Component}, index) => (
-                <Route
-                    key={index}
-                    path={path}
-                    exact
-                    render={props => (
-                        <Layout>
-                            <Component {...props} />
-                        </Layout>
-                    )}
-                />
-            ))
-        ) : (
-            // Route item without children
-            <Route
-                key={index}
-                path={path}
-                exact
-                render={props => (
-                    <Layout>
-                        <Component {...props} />
-                    </Layout>
-                )}
-            />
-        )
-    );
-
-const Routes = () => (
-    <Router>
-        <Switch>
-            {childRoutes(DashboardLayout, dashboardLayoutRoutes)}
-            {childRoutes(AuthLayout, authLayoutRoutes)}
-            <Route
-                render={() => (
-                    <AuthLayout>
-                        <Page404/>
-                    </AuthLayout>
-                )}
-            />
-        </Switch>
-    </Router>
-);
+const Routes = () => {
+    return (
+        <Router>
+            <Switch>
+                <PrivateRoute exact path={'/'} component={Home} layout={Dashboard} />
+                <Route exact path={'/auth/sign-in'} render={props => (<Auth><SignIn {...props} /></Auth>)}/>
+                <Route exact path={'/auth/sign-up'} render={props => (<Auth><SignUp {...props} /></Auth>)}/>
+            </Switch>
+        </Router>
+    )
+}
 
 export default Routes;

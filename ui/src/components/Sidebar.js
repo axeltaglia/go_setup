@@ -1,39 +1,38 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import { rgba } from "polished";
+import {rgba} from "polished";
 
-import { NavLink as RouterNavLink, withRouter } from "react-router-dom";
-import { darken } from "polished";
+import {NavLink as RouterNavLink, withRouter} from "react-router-dom";
+import {darken} from "polished";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "../vendor/perfect-scrollbar.css";
 
-import { spacing } from "@material-ui/system";
+import {spacing} from "@material-ui/system";
 
 import {
-  Avatar,
-  Badge,
-  Box as MuiBox,
-  Chip,
-  Collapse,
-  Drawer as MuiDrawer,
-  Grid,
-  List as MuiList,
-  ListItem,
-  ListItemText,
-  Typography
+    Badge,
+    Box as MuiBox,
+    Chip,
+    Drawer as MuiDrawer,
+    List as MuiList,
+    ListItem,
+    ListItemText,
+    Typography
 } from "@material-ui/core";
 
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
+import {
+    Home
+} from "react-feather";
 
-import { green } from "@material-ui/core/colors";
+import {ExpandLess, ExpandMore} from "@material-ui/icons";
 
-import { sidebarRoutes as routes } from "../routes/index";
+import {green} from "@material-ui/core/colors";
 
-import { Layers } from "react-feather";
+import {Layers} from "react-feather";
 
 const NavLink = React.forwardRef((props, ref) => (
-  <RouterNavLink innerRef={ref} {...props} />
+    <RouterNavLink innerRef={ref} {...props} />
 ));
 
 const Box = styled(MuiBox)(spacing);
@@ -83,22 +82,6 @@ const Brand = styled(ListItem)`
 const BrandIcon = styled(Layers)`
   margin-right: ${props => props.theme.spacing(2)}px;
   color: ${props => props.theme.sidebar.header.brand.color};
-`;
-
-const BrandChip = styled(Chip)`
-  background-color: ${green[700]};
-  border-radius: 5px;
-  color: ${props => props.theme.palette.common.white};
-  font-size: 60%;
-  height: 20px;
-  margin-left: 2px;
-  margin-bottom: 1px;
-  padding: 4px 0;
-
-  span {
-    padding-left: ${props => props.theme.spacing(1.5)}px;
-    padding-right: ${props => props.theme.spacing(1.5)}px;
-  }
 `;
 
 const Category = styled(ListItem)`
@@ -208,168 +191,55 @@ const SidebarSection = styled(Typography)`
   display: block;
 `;
 
-const SidebarFooter = styled.div`
-  background-color: ${props =>
-    props.theme.sidebar.footer.background} !important;
-  padding: ${props => props.theme.spacing(2.75)}px
-    ${props => props.theme.spacing(4)}px;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
-`;
-
-const SidebarFooterText = styled(Typography)`
-  color: ${props => props.theme.sidebar.footer.color};
-`;
-
-const SidebarFooterSubText = styled(Typography)`
-  color: ${props => props.theme.sidebar.footer.color};
-  font-size: .725rem;
-  display: block;
-  padding: 1px;
-`;
-
-const StyledBadge = styled(Badge)`
-  margin-right: ${props => props.theme.spacing(1)}px;
-
-  span {
-    background-color: ${props => props.theme.sidebar.footer.online.background};
-    border: 1.5px solid ${props => props.theme.palette.common.white};
-    height: 12px;
-    width: 12px;
-    border-radius: 50%;
-  }
-`
-
 function SidebarCategory({
-  name,
-  icon,
-  classes,
-  isOpen,
-  isCollapsable,
-  badge,
-  ...rest
-}) {
-  return (
-    <Category {...rest}>
-      {icon}
-      <CategoryText>{name}</CategoryText>
-      {isCollapsable ? (
-        isOpen ? (
-          <CategoryIconMore />
-        ) : (
-          <CategoryIconLess />
-        )
-      ) : null}
-      {badge ? <CategoryBadge label={badge} /> : ""}
-    </Category>
-  );
-}
-
-function SidebarLink({ name, to, badge }) {
-  return (
-    <Link
-      button
-      dense
-      component={NavLink}
-      exact
-      to={to}
-      activeClassName="active"
-    >
-      <LinkText>{name}</LinkText>
-      {badge ? <LinkBadge label={badge} /> : ""}
-    </Link>
-  );
-}
-
-function Sidebar({ classes, staticContext, location, ...rest }) {
-  const initOpenRoutes = () => {
-    /* Open collapse element that matches current url */
-    const pathName = location.pathname;
-
-    let _routes = {};
-
-    routes.forEach((route, index) => {
-      const isActive = pathName.indexOf(route.path) === 0;
-      const isOpen = route.open;
-      const isHome = route.containsHome && pathName === "/";
-
-      _routes = Object.assign({}, _routes, {[index]: isActive || isOpen || isHome})
-    });
-
-    return _routes;
-  };
-
-  const [openRoutes, setOpenRoutes] = useState(() => initOpenRoutes());
-
-  const toggle = index => {
-    // Collapse all elements
-    Object.keys(openRoutes).forEach(
-      item => openRoutes[index] || setOpenRoutes(openRoutes => Object.assign({}, openRoutes, {[item]: false}))
-    )
-    
-    // Toggle selected element
-    setOpenRoutes(openRoutes => Object.assign({}, openRoutes, {[index]: !openRoutes[index]}));
-  }
-
-  return (
-    <Drawer variant="permanent" {...rest}>
-      <Brand>
-        <BrandIcon /> <Box ml={1}>Institutional Site</Box>
-      </Brand>
-      <Scrollbar>
-        <List disablePadding>
-          <Items>
-            {routes.map((category, index) => (
-              <React.Fragment key={index}>
-                {category.header ? (
-                  <SidebarSection>{category.header}</SidebarSection>
-                ) : null}
-
-                {category.children ? (
-                  <React.Fragment key={index}>
-                    <SidebarCategory
-                      isOpen={!openRoutes[index]}
-                      isCollapsable={true}
-                      name={category.id}
-                      icon={category.icon}
-                      button={true}
-                      onClick={() => toggle(index)}
-                    />
-
-                    <Collapse
-                      in={openRoutes[index]}
-                      timeout="auto"
-                      unmountOnExit
-                    >
-                      {category.children.map((route, index) => (
-                        <SidebarLink
-                          key={index}
-                          name={route.name}
-                          to={route.path}
-                          icon={route.icon}
-                          badge={route.badge}
-                        />
-                      ))}
-                    </Collapse>
-                  </React.Fragment>
+                             name,
+                             icon,
+                             classes,
+                             isOpen,
+                             isCollapsable,
+                             badge,
+                             ...rest
+                         }) {
+    return (
+        <Category {...rest}>
+            {icon}
+            <CategoryText>{name}</CategoryText>
+            {isCollapsable ? (
+                isOpen ? (
+                    <CategoryIconMore/>
                 ) : (
-                  <SidebarCategory
-                    isCollapsable={false}
-                    name={category.id}
-                    to={category.path}
-                    activeClassName="active"
-                    component={NavLink}
-                    icon={category.icon}
-                    exact
-                    badge={category.badge}
-                  />
-                )}
-              </React.Fragment>
-            ))}
-          </Items>
-        </List>
-      </Scrollbar>
-    </Drawer>
-  );
+                    <CategoryIconLess/>
+                )
+            ) : null}
+            {badge ? <CategoryBadge label={badge}/> : ""}
+        </Category>
+    );
+}
+
+function Sidebar({classes, staticContext, location, ...rest}) {
+    return (
+        <Drawer variant="permanent" {...rest}>
+            <Brand>
+                <BrandIcon/> <Box ml={1}>Institutional Site</Box>
+            </Brand>
+            <Scrollbar>
+                <List disablePadding>
+                    <Items>
+                        <SidebarSection>Header</SidebarSection>
+                        <SidebarCategory
+                            isCollapsable={false}
+                            name={'Home'}
+                            to={'/'}
+                            activeClassName="active"
+                            component={NavLink}
+                            icon={<Home/>}
+                            exact
+                        />
+                    </Items>
+                </List>
+            </Scrollbar>
+        </Drawer>
+    );
 }
 
 export default withRouter(Sidebar);

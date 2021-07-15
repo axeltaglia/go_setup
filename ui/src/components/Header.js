@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import styled, {withTheme} from "styled-components";
-import {withRouter} from 'react-router-dom';
 
 import {
     AppBar as MuiAppBar, Avatar,
@@ -10,13 +9,12 @@ import {
     Toolbar
 } from "@material-ui/core";
 
-import {Menu as MenuIcon, Power} from "@material-ui/icons";
+import {Menu as MenuIcon} from "@material-ui/icons";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Link from "@material-ui/core/Link";
 import {NavLink as RouterNavLink} from "react-router-dom";
-import {Auth} from "../containers/AuthContainer";
-import props from "../theme/props";
+import {AuthContainer} from "../containers/AuthContainer";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -41,7 +39,7 @@ function UserMenu() {
     const {
         isLoggedIn,
         logout,
-    } = Auth.useContainer();
+    } = AuthContainer.useContainer();
 
     const toggleMenu = event => {
         setAnchorMenu(event.currentTarget);

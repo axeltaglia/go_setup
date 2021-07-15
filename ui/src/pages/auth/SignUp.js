@@ -13,7 +13,7 @@ import {
     Typography
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-import {Auth} from "../../containers/AuthContainer";
+import {AuthContainer} from "../../containers/AuthContainer";
 import {Alert} from "../../containers/AlertContainer";
 import Grid from "@material-ui/core/Grid";
 
@@ -41,7 +41,7 @@ function SignUp(props) {
     const {
         isLoggedIn,
         signUp,
-    } = Auth.useContainer();
+    } = AuthContainer.useContainer();
 
     useEffect(() => {
         if(isLoggedIn()) {
