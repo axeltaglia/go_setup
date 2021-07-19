@@ -53,9 +53,20 @@ func (o *Endpoints) signIn(tx *gorm.DB, w http.ResponseWriter, r *http.Request) 
 	tkt.JsonResponse(LoginResponse{Token: &token}, w)
 }
 
+func (o *Endpoints) createCategory(tx *gorm.DB, w http.ResponseWriter, r *http.Request) {
+	data := CreateCategoryRequest{}
+	tkt.CheckErr(tkt.ParseParamOrBody(r, &data))
+	category := models.Category{
+		Name: *data.Name,
+	}
+	tx.Create(&category)
+	JsonResponse(category, w)
+}
+
 func (o *Endpoints) Handle() {
 	tkt.TransactionalLoggable("/signUp", o.DbConfig, o.signUp)
 	tkt.TransactionalLoggable("/signIn", o.DbConfig, o.signIn)
+	tkt.AuthenticatedTransactional("/createCategory", o.DbConfig, o.createCategory)
 }
 
 func JsonResponse(i interface{}, w http.ResponseWriter) {

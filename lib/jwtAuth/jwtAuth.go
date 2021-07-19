@@ -1,7 +1,6 @@
 package jwtAuth
 
 import (
-	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"net/http"
@@ -23,19 +22,6 @@ type TokenDetails struct {
 type AccessDetails struct {
 	AccessUuid string
 	UserId     uint64
-}
-
-func InterceptAuth(delegate func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		tokenEntry, err := VerifyToken(r)
-		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			panic("unauthorized")
-		} else {
-			ctx := context.WithValue(r.Context(), "tokenEntry", tokenEntry)
-			delegate(w, r.WithContext(ctx))
-		}
-	}
 }
 
 func CreateToken(userid uint) (string, error) {

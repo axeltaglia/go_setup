@@ -22,8 +22,21 @@ func TransactionalLoggable(path string, dbConfig *string, f func(tx *gorm.DB, w 
 	http.HandleFunc(path, InterceptFatal(InterceptCORS(InterceptLoggable(dbConfig, InterceptTransactional(dbConfig, Auditable(f))))))
 }
 
-func AuthenticatedEndpoint(path string, f func(w http.ResponseWriter, r *http.Request)) {
-	http.HandleFunc(path, InterceptFatal(InterceptCORS(jwtAuth.InterceptAuth(f))))
+func AuthenticatedTransactional(path string, dbConfig *string, f func(tx *gorm.DB, w http.ResponseWriter, r *http.Request)) {
+	http.HandleFunc(path, InterceptFatal(InterceptCORS(InterceptAuth(InterceptLoggable(dbConfig, InterceptTransactional(dbConfig, Auditable(f)))))))
+}
+
+func InterceptAuth(delegate func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tokenEntry, err := jwtAuth.VerifyToken(r)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			panic("unauthorized")
+		} else {
+			ctx := context.WithValue(r.Context(), "tokenEntry", tokenEntry)
+			delegate(w, r.WithContext(ctx))
+		}
+	}
 }
 
 func InterceptFatal(delegate func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
@@ -72,22 +85,22 @@ func InterceptLoggable(dbConfig *string, f func(w http.ResponseWriter, r *http.R
 		ctx := context.WithValue(r.Context(), "errorContext", errorContext)
 		defer func() {
 			if e := recover(); e != nil {
-				/*
-					ExecuteTransactional(db, func(tx *gorm.DB, args ...interface{}) interface{} {
-						rd := RequestData{Url: r.URL, Data: data}
-						stack := strings.Split(string(debug.Stack()), "\n")
-						ed := ErrorData{Error: e, Stack: stack, Context: errorContext.Values}
-						rb := bytes.Buffer{}
-						JsonEncode(rd, &rb)
-						eb := bytes.Buffer{}
-						JsonEncode(ed, &eb)
-						r := json.RawMessage(rb.Bytes())
-						d := json.RawMessage(eb.Bytes())
-						_ := RequestError{RequestData: &r, Data: &d}
-						//pep.NewApi(tx).CreateRequestError(re)
-						return nil
-					})
-				*/
+
+				ExecuteTransactional(dbConfig, func(tx *gorm.DB, args ...interface{}) interface{} {
+					rd := RequestData{Url: r.URL, Data: data}
+					stack := strings.Split(string(debug.Stack()), "\n")
+					ed := ErrorData{Error: e, Stack: stack, Context: errorContext.Values}
+					rb := bytes.Buffer{}
+					JsonEncode(rd, &rb)
+					eb := bytes.Buffer{}
+					JsonEncode(ed, &eb)
+					//r := json.RawMessage(rb.Bytes())
+					//d := json.RawMessage(eb.Bytes())
+					//_ := RequestError{RequestData: &r, Data: &d}
+					//pep.NewApi(tx).CreateRequestError(re)
+					return nil
+				})
+
 				panic(e)
 			}
 		}()
@@ -134,7 +147,9 @@ func Auditable(delegate func(tx *gorm.DB, w http.ResponseWriter, r *http.Request
 	}
 }
 
-func ExecuteTransactional(db *gorm.DB, callback func(tx *gorm.DB, args ...interface{}) interface{}, args ...interface{}) interface{} {
+func ExecuteTransactional(dbConfig *string, callback func(tx *gorm.DB, args ...interface{}) interface{}, args ...interface{}) interface{} {
+	db, err := gorm.Open(postgres.Open(*dbConfig), &gorm.Config{SkipDefaultTransaction: true})
+	CheckErr(err)
 	defer CloseDB(db)
 	tx := db.Begin()
 	defer RollbackOnPanic(tx)

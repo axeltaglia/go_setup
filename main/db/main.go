@@ -20,8 +20,8 @@ func main() {
 }
 
 func DropTables(db *gorm.DB) {
-	//db.DropTableIfExists(products.Product{})
 	db.Migrator().DropTable(models.Category{})
+	db.Migrator().DropTable(models.User{})
 	fmt.Println("Tables dropped")
 }
 
